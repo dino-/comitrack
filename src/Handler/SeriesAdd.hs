@@ -25,7 +25,13 @@ seriesAddForm = do
     <*> aopt textField "source url" (Just $ Just "")
     <*> areq (selectFieldList pubStatusOptionPairs) "publication status" Nothing
     <*> areq (selectFieldList readingStatusOptionPairs) "reading status" Nothing
-    <*> areq intField "issues read" ((Just 0) :: Maybe Int)
+    <*> areq issuesReadField "issues read" ((Just 0) :: Maybe Int)
+
+  where
+    issuesReadErrMsg :: Text
+    issuesReadErrMsg = "Issues read must be >= 0"
+
+    issuesReadField = checkBool (>= 0) issuesReadErrMsg intField
 
 
 -- The GET handler displays the form
@@ -40,7 +46,6 @@ getSeriesAddR = do
         ^{widget}
         <button>Submit
     |]
---getSeriesAddR = error "Not yet implemented: getSeriesAddR"
 
 
 -- The POST handler processes the form
@@ -56,4 +61,3 @@ postSeriesAddR = do
           ^{widget}
           <button>Submit
       |]
---postSeriesAddR = error "Not yet implemented: postSeriesAddR"
