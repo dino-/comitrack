@@ -16,3 +16,22 @@ Comment json -- Adding "json" causes ToJSON and FromJSON instances to be derived
     userId UserId Maybe
     deriving Eq
     deriving Show
+
+-- PubSource
+--   name Text
+--   url Text
+--   deriving Show
+-- Note
+--   date UTCTime
+--   message Text
+--   deriving Show
+Series
+  modified UTCTime default=current_timestamp
+  title Text
+  creators Text Maybe
+  sourceName Text Maybe
+  sourceUrl Text Maybe
+  -- pubStatus PubStatus
+  -- readingStatus ReadingStatus
+  issuesRead Int
+  deriving Show
