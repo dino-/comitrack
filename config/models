@@ -31,7 +31,7 @@ Series
   creators Text Maybe
   sourceName Text Maybe
   sourceUrl Text Maybe
-  -- pubStatus PubStatus
+  pubStatus PubStatus
   -- readingStatus ReadingStatus
   issuesRead Int
   deriving Show

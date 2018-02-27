@@ -14,10 +14,7 @@ module Model
 import ClassyPrelude.Yesod
 import Database.Persist.Quasi
 
-
-data PubStatus = InProduction | Ended
-  deriving (Eq, Read, Show)
-derivePersistField "PubStatus"
+import Model.Series
 
 
 data ReadingStatus = Reading | NotReading
