@@ -11,7 +11,7 @@ import Data.Time.Clock ( getCurrentTime )
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
 
 import Import
-import Model.Series ( pubStatusOptionPairs )
+import Model.Series ( pubStatusOptionPairs, readingStatusOptionPairs )
 
 
 seriesAddForm :: Form Series
@@ -24,6 +24,7 @@ seriesAddForm = do
     <*> aopt textField "source name" (Just $ Just "")
     <*> aopt textField "source url" (Just $ Just "")
     <*> areq (selectFieldList pubStatusOptionPairs) "publication status" Nothing
+    <*> areq (selectFieldList readingStatusOptionPairs) "reading status" Nothing
     <*> areq intField "issues read" ((Just 0) :: Maybe Int)
 
 

@@ -17,11 +17,6 @@ import Database.Persist.Quasi
 import Model.Series
 
 
-data ReadingStatus = Reading | NotReading
-  deriving (Eq, Read, Show)
-derivePersistField "ReadingStatus"
-
-
 -- You can define all of your database entities in the entities file.
 -- You can find more information on persistent and how to declare entities
 -- at:

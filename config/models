@@ -32,6 +32,6 @@ Series
   sourceName Text Maybe
   sourceUrl Text Maybe
   pubStatus PubStatus
-  -- readingStatus ReadingStatus
+  readingStatus ReadingStatus
   issuesRead Int
   deriving Show
