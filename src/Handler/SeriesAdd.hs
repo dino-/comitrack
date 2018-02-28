@@ -53,7 +53,9 @@ postSeriesAddR :: Handler Html
 postSeriesAddR = do
   ((result, widget), enctype) <- runFormPost seriesAddForm
   case result of
-    FormSuccess series -> defaultLayout [whamlet|<p>#{show series}|]
+    FormSuccess series -> do
+      e <- runDB $ insertEntity series
+      defaultLayout [whamlet|<p>#{show e}|]
     _ -> defaultLayout
       [whamlet|
         <p>Invalid input, let's try again.
