@@ -1,37 +1,21 @@
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
 
-module Handler.SeriesAdd where
+module Handler.SeriesAdd
+  ( getSeriesAddR
+  , postSeriesAddR
+  )
+  where
 
 import Data.Time.Clock ( getCurrentTime )
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
 
 import Import
 import Model.Series ( pubStatusOptionPairs, readingStatusOptionPairs )
-
-
-seriesAddForm :: Form Series
-seriesAddForm = do
-  renderBootstrap3 BootstrapBasicForm $ Series
-  --renderDivs $ Series
-    <$> lift (liftIO getCurrentTime)
-    <*> areq textField "title" Nothing
-    <*> aopt textField "creators" Nothing
-    <*> aopt textField "source name" (Just $ Just "")
-    <*> aopt textField "source url" (Just $ Just "")
-    <*> areq (selectFieldList pubStatusOptionPairs) "publication status" Nothing
-    <*> areq (selectFieldList readingStatusOptionPairs) "reading status" Nothing
-    <*> areq issuesReadField "issues read" ((Just 0) :: Maybe Int)
-
-  where
-    issuesReadErrMsg :: Text
-    issuesReadErrMsg = "Issues read must be >= 0"
-
-    issuesReadField = checkBool (>= 0) issuesReadErrMsg intField
 
 
 -- The GET handler displays the form
@@ -48,13 +32,37 @@ getSeriesAddR = do
     |]
 
 
+seriesAddForm :: Form Series
+seriesAddForm = do
+  renderBootstrap3 BootstrapBasicForm $ Series
+  --renderDivs $ Series
+    <$> lift (liftIO getCurrentTime)
+    <*> areq textField "title" Nothing
+    -- This `pure ""` is a dummy value, should NEVER go into the db! Fixed in
+    -- postSeriesAddR below.
+    <*> pure ""
+    <*> aopt textField "creators" Nothing
+    <*> aopt textField "source name" (Just $ Just "")
+    <*> aopt textField "source url" (Just $ Just "")
+    <*> areq (selectFieldList pubStatusOptionPairs) "publication status" Nothing
+    <*> areq (selectFieldList readingStatusOptionPairs) "reading status" Nothing
+    <*> areq issuesReadField "issues read" ((Just 0) :: Maybe Int)
+
+  where
+    issuesReadErrMsg :: Text
+    issuesReadErrMsg = "Issues read must be >= 0"
+
+    issuesReadField = checkBool (>= 0) issuesReadErrMsg intField
+
+
 -- The POST handler processes the form
 postSeriesAddR :: Handler Html
 postSeriesAddR = do
   ((result, widget), enctype) <- runFormPost seriesAddForm
   case result of
     FormSuccess series -> do
-      e <- runDB $ insertEntity series
+      let fixedSeries = series { seriesFileAsTitle = genFileAs $ seriesTitle series }
+      e <- runDB $ insertEntity fixedSeries
       defaultLayout [whamlet|<p>#{show e}|]
     _ -> defaultLayout
       [whamlet|
@@ -63,3 +71,12 @@ postSeriesAddR = do
           ^{widget}
           <button>Submit
       |]
+
+
+{- Generate the seriesFileAsTitle column value
+   In practical terms, this means lower-case the entire title and remove "the "
+   if present so that sorting works in a human-friendly way.
+-}
+genFileAs :: Text -> Text
+genFileAs = rmThe . toLower where
+  rmThe t = maybe t id $ stripPrefix "the " t

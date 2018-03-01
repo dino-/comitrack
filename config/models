@@ -28,6 +28,7 @@ Comment json -- Adding "json" causes ToJSON and FromJSON instances to be derived
 Series
   modified UTCTime default=current_timestamp
   title Text
+  fileAsTitle Text
   creators Text Maybe
   sourceName Text Maybe
   sourceUrl Text Maybe

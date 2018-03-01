@@ -21,5 +21,5 @@ seriesTable = mempty
 
 getSeriesListR :: Handler Html
 getSeriesListR = do
-  series <- runDB $ map entityVal <$> selectList [] [Asc SeriesTitle]
+  series <- runDB $ map entityVal <$> selectList [] [Asc SeriesFileAsTitle]
   defaultLayout $ Table.buildBootstrap seriesTable series
