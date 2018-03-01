@@ -28,7 +28,8 @@ getSeriesAddR = do
       <p>
       <form method=post action=@{SeriesAddR} enctype=#{enctype}>
         ^{widget}
-        <button>Submit
+        <button class="btn btn-primary active">Ok
+        <a href="@{SeriesListR}" class="btn btn-primary">Cancel
     |]
 
 
@@ -62,14 +63,15 @@ postSeriesAddR = do
   case result of
     FormSuccess series -> do
       let fixedSeries = series { seriesFileAsTitle = genFileAs $ seriesTitle series }
-      e <- runDB $ insertEntity fixedSeries
-      defaultLayout [whamlet|<p>#{show e}|]
+      _ <- runDB $ insertEntity fixedSeries
+      redirect SeriesListR
     _ -> defaultLayout
       [whamlet|
         <p>Invalid input, let's try again.
         <form method=post action=@{SeriesAddR} enctype=#{enctype}>
           ^{widget}
-          <button>Submit
+          <button class="btn btn-primary active">Ok
+          <a href="@{SeriesListR}" class="btn btn-primary">Cancel
       |]
 
 

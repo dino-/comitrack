@@ -1,5 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 
 module Handler.SeriesList where
 
@@ -22,4 +23,9 @@ seriesTable = mempty
 getSeriesListR :: Handler Html
 getSeriesListR = do
   series <- runDB $ map entityVal <$> selectList [] [Asc SeriesFileAsTitle]
-  defaultLayout $ Table.buildBootstrap seriesTable series
+  defaultLayout
+    [whamlet|
+      <p>
+      <a href="@{SeriesAddR}" class="btn btn-primary active">Add a new series
+      ^{Table.buildBootstrap seriesTable series}
+    |]

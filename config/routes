@@ -7,10 +7,10 @@
 /favicon.ico FaviconR GET
 /robots.txt RobotsR GET
 
-/ HomeR GET POST
+/oldhome HomeR GET POST
 
 /comments CommentR POST
 
 /profile ProfileR GET
 /series/add SeriesAddR GET POST
-/series/list SeriesListR GET
+/ SeriesListR GET
