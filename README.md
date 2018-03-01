@@ -1,4 +1,31 @@
-## Haskell Setup
+# comitrack
+
+
+## Synopsis
+
+Web application for tracking acquisition and reading of graphic novels
+(Haskell, Yesod)
+
+
+## Description
+
+This is a web-based application for tracking graphics novel and comic titles
+that one is activately reading, has read in the past, or perhaps would like to
+find more about. It will eventually be able to store source info (like a store
+or author site) and notes about the series.
+
+This crude project is my first attempt at a real, working Yesod web application.
+
+
+## Contact
+
+Dino Morelli <[dino@ui3.info](mailto:dino@ui3.info)>
+
+
+## Beyond this point is the stock info dropped by `stack new ... yesod-*`
+
+
+### Haskell Setup
 
 1. If you haven't already, [install Stack](https://haskell-lang.org/get-started)
 	* On POSIX systems, this is usually `curl -sSL https://get.haskellstack.org/ | sh`
@@ -7,7 +34,8 @@
 
 If you have trouble, refer to the [Yesod Quickstart guide](https://www.yesodweb.com/page/quickstart) for additional detail.
 
-## Development
+
+### Development
 
 Start a development server with:
 
@@ -17,7 +45,8 @@ stack exec -- yesod devel
 
 As your code changes, your site will be automatically be recompiled and redeployed to localhost.
 
-## Tests
+
+### Tests
 
 ```
 stack test --flag comitrack:library-only --flag comitrack:dev
@@ -25,7 +54,8 @@ stack test --flag comitrack:library-only --flag comitrack:dev
 
 (Because `yesod devel` passes the `library-only` and `dev` flags, matching those flags means you don't need to recompile between tests and development, and it disables optimization to speed up your test compile times).
 
-## Documentation
+
+### Documentation
 
 * Read the [Yesod Book](https://www.yesodweb.com/book) online for free
 * Check [Stackage](http://stackage.org/) for documentation on the packages in your LTS Haskell version, or [search it using Hoogle](https://www.stackage.org/lts/hoogle?q=). Tip: Your LTS version is in your `stack.yaml` file.
@@ -34,7 +64,8 @@ stack test --flag comitrack:library-only --flag comitrack:dev
 	* `stack hoogle <function, module or type signature>` to generate a Hoogle database and search for your query
 * The [Yesod cookbook](https://github.com/yesodweb/yesod-cookbook) has sample code for various needs
 
-## Getting Help
+
+### Getting Help
 
 * Ask questions on [Stack Overflow, using the Yesod or Haskell tags](https://stackoverflow.com/questions/tagged/yesod+haskell)
 * Ask the [Yesod Google Group](https://groups.google.com/forum/#!forum/yesodweb)
