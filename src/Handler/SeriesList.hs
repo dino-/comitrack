@@ -5,21 +5,23 @@
 module Handler.SeriesList where
 
 import Data.Time.LocalTime ( TimeZone, getCurrentTimeZone )
-import Yesod.Table ( Table )
-import qualified Yesod.Table as Table
+import Colonnade
+import qualified Text.Blaze.Html5.Attributes as HA
+import Yesod.Colonnade
 
 import Import
 import Model.Series ( formatModifiedDate )
 
 
-seriesTable :: TimeZone -> Table site Series
-seriesTable localTimeZone = mempty
-  <> Table.text   "Title"               seriesTitle
-  <> Table.text   "Source"              (maybe "" id . seriesSourceName)
-  <> Table.text   "Publication status"  (tshow . seriesPubStatus)
-  <> Table.text   "Reading status"      (tshow . seriesReadingStatus)
-  <> Table.int    "Issues read"         seriesIssuesRead
-  <> Table.text   "Last modified"       (formatModifiedDate localTimeZone . seriesModified)
+seriesTable :: TimeZone -> Colonnade Headed Series (Cell site)
+seriesTable localTimeZone = mconcat
+  [ headed "Title"               (textCell . seriesTitle)
+  , headed "Source"              (textCell . maybe "" id . seriesSourceName)
+  , headed "Publication status"  (textCell . tshow . seriesPubStatus)
+  , headed "Reading status"      (textCell . tshow . seriesReadingStatus)
+  , headed "Issues read"         (textCell . tshow . seriesIssuesRead)
+  , headed "Last modified"       (textCell . formatModifiedDate localTimeZone . seriesModified)
+  ]
 
 
 getSeriesListR :: Handler Html
@@ -30,5 +32,5 @@ getSeriesListR = do
     [whamlet|
       <p>
       <a href="@{SeriesAddR}" class="btn btn-primary active">Add a new series
-      ^{Table.buildBootstrap (seriesTable localTimeZone) series}
+      ^{encodeCellTable (HA.class_ "table table-striped") (seriesTable localTimeZone) series}
     |]

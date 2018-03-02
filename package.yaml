@@ -46,7 +46,9 @@ dependencies:
 - case-insensitive
 - wai
 - foreign-store
-- yesod-table
+- blaze-html
+- colonnade
+- yesod-colonnade
 - string-conv
 
 # The library contains all of our application code. The executable
