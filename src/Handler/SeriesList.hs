@@ -16,12 +16,23 @@ import Model.Series ( formatModifiedDate )
 seriesTable :: TimeZone -> Colonnade Headed Series (Cell site)
 seriesTable localTimeZone = mconcat
   [ headed "Title"               (textCell . seriesTitle)
+  , headed ""                    mkMenuCell
   , headed "Source"              mkSourceCell
   , headed "Publication status"  (textCell . tshow . seriesPubStatus)
   , headed "Reading status"      (textCell . tshow . seriesReadingStatus)
   , headed "Issues read"         (textCell . tshow . seriesIssuesRead)
   , headed "Last modified"       (textCell . formatModifiedDate localTimeZone . seriesModified)
   ]
+
+
+mkMenuCell :: Series -> Cell site
+mkMenuCell series = cell [whamlet|
+    <div class="dropdown">
+      <span class="glyphicon glyphicon-option-vertical dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" aria-hidden="true">
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <li><a href="#">Edit
+        <li><a href="#">Delete
+  |]
 
 
 mkSourceCell :: Series -> Cell site
