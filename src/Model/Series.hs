@@ -7,6 +7,7 @@ module Model.Series
   , ReadingStatus (..)
   , formatModifiedDate
   , pubStatusOptionPairs
+  , readingStatusHumanReadable
   , readingStatusOptionPairs
   )
   where
@@ -34,6 +35,12 @@ derivePersistField "ReadingStatus"
 
 readingStatusOptionPairs :: [(Text, ReadingStatus)]
 readingStatusOptionPairs = [("Reading", Reading), ("Not reading", NotReading)]
+
+
+readingStatusHumanReadable :: ReadingStatus -> Text
+readingStatusHumanReadable rs = maybe (tshow rs) id $ lookup rs rsMappedToText
+  where
+    rsMappedToText = [ (v, k) | (k, v) <- readingStatusOptionPairs ]
 
 
 formatModifiedDate :: TimeZone -> UTCTime -> Text

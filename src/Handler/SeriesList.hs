@@ -10,7 +10,7 @@ import qualified Text.Blaze.Html5.Attributes as HA
 import Yesod.Colonnade ( Cell, cell, encodeCellTable, textCell )
 
 import Import
-import Model.Series ( formatModifiedDate )
+import Model.Series ( formatModifiedDate, readingStatusHumanReadable )
 
 
 seriesTable :: TimeZone -> Colonnade Headed Series (Cell site)
@@ -19,7 +19,7 @@ seriesTable localTimeZone = mconcat
   , headed ""                    mkMenuCell
   , headed "Source"              mkSourceCell
   , headed "Publication status"  (textCell . tshow . seriesPubStatus)
-  , headed "Reading status"      (textCell . tshow . seriesReadingStatus)
+  , headed "Reading status"      (textCell . readingStatusHumanReadable . seriesReadingStatus)
   , headed "Issues read"         (textCell . tshow . seriesIssuesRead)
   , headed "Last modified"       (textCell . formatModifiedDate localTimeZone . seriesModified)
   ]
