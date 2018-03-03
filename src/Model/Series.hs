@@ -12,18 +12,19 @@ module Model.Series
   where
 
 import ClassyPrelude.Yesod
+import Control.Arrow ( (&&&) )
 import Data.String.Conv ( toS )
 import Data.Time.Format ( defaultTimeLocale, formatTime )
 import Data.Time.LocalTime ( TimeZone, utcToZonedTime )
 
 
-data PubStatus = InProduction | Ended
+data PubStatus = Ongoing | Ended
   deriving (Eq, Read, Show)
 derivePersistField "PubStatus"
 
 
 pubStatusOptionPairs :: [(Text, PubStatus)]
-pubStatusOptionPairs = [("In production", InProduction) , ("Ended", Ended)]
+pubStatusOptionPairs = map (tshow &&& id) [Ongoing, Ended]
 
 
 data ReadingStatus = Reading | NotReading
