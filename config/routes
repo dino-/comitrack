@@ -14,3 +14,4 @@
 /profile ProfileR GET
 /series/add SeriesAddR GET POST
 / SeriesListR GET
+/series/delete/#SeriesId SeriesDeleteR GET

@@ -13,25 +13,25 @@ import Import
 import Model.Series ( formatModifiedDate, readingStatusHumanReadable )
 
 
-seriesTable :: TimeZone -> Colonnade Headed Series (Cell site)
+seriesTable :: TimeZone -> Colonnade Headed (Entity Series) (Cell App)
 seriesTable localTimeZone = mconcat
-  [ headed "Title"               (textCell . seriesTitle)
-  , headed ""                    mkMenuCell
-  , headed "Source"              mkSourceCell
-  , headed "Publication status"  (textCell . tshow . seriesPubStatus)
-  , headed "Reading status"      (textCell . readingStatusHumanReadable . seriesReadingStatus)
-  , headed "Issues read"         (textCell . tshow . seriesIssuesRead)
-  , headed "Last modified"       (textCell . formatModifiedDate localTimeZone . seriesModified)
+  [ headed "Title"               (textCell . seriesTitle . entityVal)
+  , headed ""                    (mkMenuCell . entityKey)
+  , headed "Source"              (mkSourceCell . entityVal)
+  , headed "Publication status"  (textCell . tshow . seriesPubStatus . entityVal)
+  , headed "Reading status"      (textCell . readingStatusHumanReadable . seriesReadingStatus . entityVal)
+  , headed "Issues read"         (textCell . tshow . seriesIssuesRead . entityVal)
+  , headed "Last modified"       (textCell . formatModifiedDate localTimeZone . seriesModified . entityVal)
   ]
 
 
-mkMenuCell :: Series -> Cell site
-mkMenuCell series = cell [whamlet|
+mkMenuCell :: Key Series -> Cell App
+mkMenuCell seriesId = cell [whamlet|
     <div class="dropdown">
       <span class="glyphicon glyphicon-option-vertical dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" aria-hidden="true">
       <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
         <li><a href="#">Edit
-        <li><a href="#">Delete
+        <li><a href="@{SeriesDeleteR seriesId}">Delete
   |]
 
 
@@ -50,10 +50,10 @@ mkSourceCell series = case (seriesSourceName series, seriesSourceUrl series) of
 getSeriesListR :: Handler Html
 getSeriesListR = do
   localTimeZone <- liftIO getCurrentTimeZone
-  series <- runDB $ map entityVal <$> selectList [] [Asc SeriesFileAsTitle]
+  eseries <- runDB $ selectList [] [Asc SeriesFileAsTitle]
   defaultLayout
     [whamlet|
       <p>
       <a href="@{SeriesAddR}" class="btn btn-primary active">Add a new series
-      ^{encodeCellTable (HA.class_ "table table-striped") (seriesTable localTimeZone) series}
+      ^{encodeCellTable (HA.class_ "table table-striped") (seriesTable localTimeZone) eseries}
     |]
