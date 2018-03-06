@@ -16,7 +16,7 @@ import Model.Series ( formatModifiedDate, readingStatusHumanReadable )
 seriesTable :: TimeZone -> Colonnade Headed (Entity Series) (Cell App)
 seriesTable localTimeZone = mconcat
   [ headed "Title"               (textCell . seriesTitle . entityVal)
-  , headed ""                    (mkMenuCell . entityKey)
+  , headed ""                    mkMenuCell
   , headed "Source"              (mkSourceCell . entityVal)
   , headed "Publication status"  (textCell . tshow . seriesPubStatus . entityVal)
   , headed "Reading status"      (textCell . readingStatusHumanReadable . seriesReadingStatus . entityVal)
@@ -25,13 +25,13 @@ seriesTable localTimeZone = mconcat
   ]
 
 
-mkMenuCell :: Key Series -> Cell App
-mkMenuCell seriesId = cell [whamlet|
+mkMenuCell :: Entity Series -> Cell App
+mkMenuCell series = cell [whamlet|
     <div class="dropdown">
       <span class="glyphicon glyphicon-option-vertical dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" aria-hidden="true">
       <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
         <li><a href="#">Edit
-        <li><a href="@{SeriesDeleteR seriesId}">Delete
+        <li><a href="#" data-toggle="modal" data-target="#delModal" data-seriestitle="#{seriesTitle (entityVal series)}" data-delurl="@{SeriesDeleteR (entityKey series)}">Delete
   |]
 
 
@@ -51,7 +51,40 @@ getSeriesListR :: Handler Html
 getSeriesListR = do
   localTimeZone <- liftIO getCurrentTimeZone
   eseries <- runDB $ selectList [] [Asc SeriesFileAsTitle]
-  defaultLayout
+
+  defaultLayout $ do
+    toWidget [hamlet|
+      <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-laballedby="delModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;
+              <h4 class="modal-title">Confirm series delete
+            <div class="modal-body">
+              <p id="delbody">Dummy dialog text
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel
+              <a id="delbutton" href="#" type="button" class="btn btn-primary">Delete
+    |]
+
+    toWidget [julius|
+      $('#delModal').on('show.bs.modal', function (event) {
+        var modal = $(this)
+
+        // Link that triggered the modal
+        var link = $(event.relatedTarget)
+
+        // Set the body text
+        var seriesTitle = link.data('seriestitle')
+        modal.find('#delbody').text(
+          "".concat("Delete '", seriesTitle, "', are you sure?"))
+
+        // Set the Delete button's url
+        var delUrl = link.data('delurl')
+        modal.find('#delbutton').attr('href', delUrl)
+      })
+    |]
+
     [whamlet|
       <p>
       <a href="@{SeriesAddR}" class="btn btn-primary active">Add a new series
