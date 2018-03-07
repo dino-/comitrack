@@ -30,8 +30,8 @@ mkMenuCell series = cell [whamlet|
     <div class="dropdown">
       <span class="glyphicon glyphicon-option-vertical dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" aria-hidden="true">
       <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="#">Edit
-        <li><a href="#" data-toggle="modal" data-target="#delModal" data-seriestitle="#{seriesTitle (entityVal series)}" data-delurl="@{SeriesDeleteR (entityKey series)}">Delete
+        <li><a href="#">Edit</a>
+        <li><a href="#" data-toggle="modal" data-target="#delModal" data-seriestitle="#{seriesTitle (entityVal series)}" data-delurl="@{SeriesDeleteR (entityKey series)}">Delete</a>
   |]
 
 
@@ -87,6 +87,6 @@ getSeriesListR = do
 
     [whamlet|
       <p>
-      <a href="@{SeriesAddR}" class="btn btn-primary active">Add a new series
+      <a href="@{SeriesAddR}" .btn .btn-default>Add a new series
       ^{encodeCellTable (HA.class_ "table table-striped") (seriesTable localTimeZone) eseries}
     |]

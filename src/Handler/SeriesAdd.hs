@@ -1,4 +1,3 @@
-{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
@@ -12,10 +11,10 @@ module Handler.SeriesAdd
   where
 
 import Data.Time.Clock ( getCurrentTime )
-import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
+import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), bfs, renderBootstrap3)
 
 import Import
-import Model.Series ( pubStatusOptionPairs, readingStatusOptionPairs )
+import Model.Series ( genFileAs, pubStatusOptionPairs, readingStatusOptionPairs )
 
 
 -- The GET handler displays the form
@@ -25,29 +24,29 @@ getSeriesAddR = do
   (widget, enctype) <- generateFormPost seriesAddForm
   defaultLayout
     [whamlet|
+      <h3>Add a new series
       <p>
-      <form method=post action=@{SeriesAddR} enctype=#{enctype}>
+      <form role=form method=post action=@{SeriesAddR} enctype=#{enctype}>
         ^{widget}
-        <button class="btn btn-primary active">Ok
-        <a href="@{SeriesListR}" class="btn btn-primary">Cancel
+        <a href="@{SeriesListR}" .btn .btn-default>Cancel
+        <button type="submit" .btn .btn-primary>Ok
     |]
 
 
 seriesAddForm :: Form Series
 seriesAddForm = do
   renderBootstrap3 BootstrapBasicForm $ Series
-  --renderDivs $ Series
     <$> lift (liftIO getCurrentTime)
-    <*> areq textField "title" Nothing
+    <*> areq textField (bfs ("title" :: Text)) Nothing
     -- This `pure ""` is a dummy value, should NEVER go into the db! Fixed in
     -- postSeriesAddR below.
     <*> pure ""
-    <*> aopt textField "creators" Nothing
-    <*> aopt textField "source name" (Just $ Just "")
-    <*> aopt textField "source url" (Just $ Just "")
-    <*> areq (selectFieldList pubStatusOptionPairs) "publication status" Nothing
-    <*> areq (selectFieldList readingStatusOptionPairs) "reading status" Nothing
-    <*> areq issuesReadField "issues read" ((Just 0) :: Maybe Int)
+    <*> aopt textField (bfs ("creators" :: Text)) Nothing
+    <*> aopt textField (bfs ("source name" :: Text)) (Just $ Just "")
+    <*> aopt textField (bfs ("source url" :: Text)) (Just $ Just "")
+    <*> areq (selectFieldList pubStatusOptionPairs) (bfs ("publication status" :: Text)) Nothing
+    <*> areq (selectFieldList readingStatusOptionPairs) (bfs ("reading status" :: Text)) Nothing
+    <*> areq issuesReadField (bfs ("issues read" :: Text)) ((Just 0) :: Maybe Int)
 
   where
     issuesReadErrMsg :: Text
@@ -68,17 +67,8 @@ postSeriesAddR = do
     _ -> defaultLayout
       [whamlet|
         <p>Invalid input, let's try again.
-        <form method=post action=@{SeriesAddR} enctype=#{enctype}>
+        <form role=form method=post action=@{SeriesAddR} enctype=#{enctype}>
           ^{widget}
-          <button class="btn btn-primary active">Ok
-          <a href="@{SeriesListR}" class="btn btn-primary">Cancel
+          <a href="@{SeriesListR}" .btn .btn-default>Cancel
+          <button type="submit" .btn .btn-primary>Ok
       |]
-
-
-{- Generate the seriesFileAsTitle column value
-   In practical terms, this means lower-case the entire title and remove "the "
-   if present so that sorting works in a human-friendly way.
--}
-genFileAs :: Text -> Text
-genFileAs = rmThe . toLower where
-  rmThe t = maybe t id $ stripPrefix "the " t
