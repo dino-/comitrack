@@ -7030,3 +7030,7 @@ tr .dropdown-toggle {
 tr:hover .dropdown-toggle {
   color: black;
 }
+span#dropdownSeries {
+  padding-left: 1em;
+  padding-right: 1em;
+}
