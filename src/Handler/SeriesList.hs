@@ -26,12 +26,12 @@ seriesTable localTimeZone = mconcat
 
 
 mkMenuCell :: Entity Series -> Cell App
-mkMenuCell series = cell [whamlet|
+mkMenuCell eSeries = cell [whamlet|
     <div class="dropdown">
       <span class="glyphicon glyphicon-option-vertical dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" aria-hidden="true">
       <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="#">Edit</a>
-        <li><a href="#" data-toggle="modal" data-target="#delModal" data-seriestitle="#{seriesTitle (entityVal series)}" data-delurl="@{SeriesDeleteR (entityKey series)}">Delete</a>
+        <li><a href="@{SeriesEditR (entityKey eSeries)}">Edit</a>
+        <li><a href="#" data-toggle="modal" data-target="#delModal" data-seriestitle="#{seriesTitle (entityVal eSeries)}" data-delurl="@{SeriesDeleteR (entityKey eSeries)}">Delete</a>
   |]
 
 

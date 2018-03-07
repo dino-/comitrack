@@ -12,6 +12,8 @@
 /comments CommentR POST
 
 /profile ProfileR GET
-/series/add SeriesAddR GET POST
+
 / SeriesListR GET
+/series/add SeriesAddR GET POST
 /series/delete/#SeriesId SeriesDeleteR GET
+/series/edit/#SeriesId SeriesEditR GET POST

@@ -154,6 +154,7 @@ instance Yesod App where
     isAuthorized RobotsR _ = return Authorized
     isAuthorized SeriesAddR _ = return Authorized
     isAuthorized (SeriesDeleteR _) _ = return Authorized
+    isAuthorized (SeriesEditR _) _ = return Authorized
     isAuthorized SeriesListR _ = return Authorized
     isAuthorized (StaticR _) _ = return Authorized
 
